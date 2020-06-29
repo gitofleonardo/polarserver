@@ -1,0 +1,36 @@
+package cn.huangchengxi.polarserver.account;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+public class EmailPasswordProvider implements AuthenticationProvider {
+    @Autowired
+    PolarLocalUserService service;
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
+
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        UserDetails user=service.findByEmail((String)authentication.getPrincipal());
+        if (user==null){
+            return authentication;
+        }
+        String password=(String)authentication.getCredentials();
+        if (!passwordEncoder.matches(password,user.getPassword())){
+            authentication.setAuthenticated(false);
+        }else{
+            authentication.setAuthenticated(true);
+        }
+        ((EmailPasswordAuthToken) authentication).setAuths(user.getAuthorities());
+        return authentication;
+    }
+
+    @Override
+    public boolean supports(Class<?> aClass) {
+        return aClass == EmailPasswordAuthToken.class;
+    }
+}
