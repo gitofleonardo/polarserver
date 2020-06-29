@@ -55,7 +55,7 @@ public class LoginController {
         object.put("time",new Date().toString());
         return object.toJSONString();
     }
-    @RequestMapping(name = "/sign-up",method = RequestMethod.POST)
+    @RequestMapping("/sign-up")
     public String signUp(@RequestParam("email") String email,@RequestParam("password") String password,@RequestParam("validation") String code){
         JSONObject obj=new JSONObject();
         Optional<ValidationCode> c=validationRepository.findByCode(code);
@@ -82,19 +82,29 @@ public class LoginController {
     private JavaMailSender mailSender;
     //get a validation code
     @RequestMapping("/validation-code")
-    public String validationCode(@RequestParam("validation-code") String email){
+    public String validationCode(@RequestParam("email") String email){
         JSONObject obj=new JSONObject();
         if (!checkEmail(email)){
             obj.put("state","failure");
             obj.put("message","Email formatting error.Are you a hacker?");
             return obj.toJSONString();
         }
-        ValidationCode code=new ValidationCode();
-        code.setEmail(email);
-        code.setCode(generateValidationCode());
-        boolean s=sendCodeMessage(email,code.getCode());
+        Optional<ValidationCode> code=validationRepository.findByEmail(email);
+        String cc=generateValidationCode();
+        boolean s=sendCodeMessage(email,cc);
         if (s){
-            validationRepository.save(code);
+            if (code.isPresent()){
+                code.get().setCode(cc);
+                code.get().setTime(System.currentTimeMillis());
+                validationRepository.save(code.get());
+            }else{
+                ValidationCode c=new ValidationCode();
+                c.setCode(cc);
+                c.setEmail(email);
+                c.setTime(System.currentTimeMillis());
+                c.setTtl(60*10*1000L);
+                validationRepository.save(c);
+            }
             obj.put("state","success");
             obj.put("message","An email code has been sent to your email");
         }else{
@@ -143,7 +153,7 @@ public class LoginController {
         Random r=new Random();
         StringBuilder result= new StringBuilder();
         for (int i=0;i<6;i++){
-            result.append(r.nextInt());
+            result.append(r.nextInt(10));
         }
         return result.toString();
     }

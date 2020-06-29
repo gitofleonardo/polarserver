@@ -12,6 +12,8 @@ public class ValidationCode {
     private String email;
     @Column(name = "code")
     private String code;
+    private Long time;
+    private Long ttl;
 
     public Long getId() {
         return id;
@@ -31,6 +33,22 @@ public class ValidationCode {
 
     public String getEmail() {
         return email;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public Long getTtl() {
+        return ttl;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    public void setTtl(Long ttl) {
+        this.ttl = ttl;
     }
 
     public void setEmail(String email) {

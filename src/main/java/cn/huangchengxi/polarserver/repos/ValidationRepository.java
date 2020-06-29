@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface ValidationRepository extends JpaRepository<ValidationCode,Long> {
     Optional<ValidationCode> findById(Long id);
     Optional<ValidationCode> findByCode(String code);
+    Optional<ValidationCode> findByEmail(String email);
 }

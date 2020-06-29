@@ -44,6 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/error","/login-failure","/sign-up","/login-state","/login","/");
+                .antMatchers("/error","/login-failure","/sign-up","/login-state","/login","/","/validation-code","/check-code");
     }
 }
