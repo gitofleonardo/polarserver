@@ -63,6 +63,13 @@ public class LoginController {
     @RequestMapping("/sign-up")
     public String signUp(@RequestParam("email") String email,@RequestParam("password") String password,@RequestParam("validation") String code){
         JSONObject obj=new JSONObject();
+        Optional<User> u=userRepository.findByEmail(email);
+        if (u.isPresent()){
+            obj.put("state","failure");
+            obj.put("reason","EMAIL_ALREADY_IN_USE");
+            obj.put("message","Email already in use");
+            return obj.toJSONString();
+        }
         Optional<ValidationCode> c=validationRepository.findByCode(code);
         if (!c.isPresent() || !email.equals(c.get().getEmail())){
             obj.put("state","failure");
@@ -89,6 +96,13 @@ public class LoginController {
     @RequestMapping("/validation-code")
     public String validationCode(@RequestParam("email") String email){
         JSONObject obj=new JSONObject();
+        Optional<User> u=userRepository.findByEmail(email);
+        if (u.isPresent()){
+            obj.put("state","failure");
+            obj.put("reason","EMAIL_ALREADY_IN_USE");
+            obj.put("message","Email already in use");
+            return obj.toJSONString();
+        }
         if (!checkEmail(email)){
             obj.put("state","failure");
             obj.put("message","Email formatting error.Are you a hacker?");
