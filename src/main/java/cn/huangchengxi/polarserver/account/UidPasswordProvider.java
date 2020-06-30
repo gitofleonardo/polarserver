@@ -16,12 +16,15 @@ public class UidPasswordProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         UserDetails user=service.findByUid(Long.parseLong((String) authentication.getPrincipal()));
+        System.out.println(authentication.getPrincipal());
+        System.out.println(authentication.getCredentials());
         if (user==null){
-            return authentication;
+            throw new AuthenticationException("User not exists"){};
         }
         String password=(String)authentication.getCredentials();
         if (!passwordEncoder.matches(password,user.getPassword())){
             authentication.setAuthenticated(false);
+            throw new AuthenticationException("Password not correct"){};
         }else{
             authentication.setAuthenticated(true);
         }

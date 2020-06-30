@@ -31,9 +31,7 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
         }else if (formatUid(username)){
             authentication=new UidPasswordAuthToken(username,password);
         }else{
-            authentication=new UidPasswordAuthToken(username,password);
-            authentication.setAuthenticated(false);
-            return authentication;
+            throw new AuthenticationException("Username password not correct"){};
         }
         return getAuthenticationManager().authenticate(authentication);
     }

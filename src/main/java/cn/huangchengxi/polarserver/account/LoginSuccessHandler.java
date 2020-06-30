@@ -14,11 +14,13 @@ import java.io.IOException;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+        request.getSession(true).setAttribute("username",authentication.getPrincipal());
         response.sendRedirect("/login-success");
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
+        httpServletRequest.getSession(true).setAttribute("username",authentication.getPrincipal());
         httpServletResponse.sendRedirect("/login-success");
     }
 }

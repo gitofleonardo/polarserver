@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,6 +42,7 @@ public class LoginController {
     public String failure(){
         JSONObject object=new JSONObject();
         object.put("state","failure");
+        object.put("reason",0);
         object.put("time",new Date().toString());
         return object.toJSONString();
     }
@@ -55,6 +57,9 @@ public class LoginController {
         object.put("time",new Date().toString());
         return object.toJSONString();
     }
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
+
     @RequestMapping("/sign-up")
     public String signUp(@RequestParam("email") String email,@RequestParam("password") String password,@RequestParam("validation") String code){
         JSONObject obj=new JSONObject();
@@ -71,7 +76,7 @@ public class LoginController {
         }
         List<Role> roles=new ArrayList<>();
         roles.add(roleRepository.findById(0L).orElse(null));
-        User user=new User(email,password,roles);
+        User user=new User(email,passwordEncoder.encode(password),roles);
         userRepository.save(user);
 
         obj.put("state","success");

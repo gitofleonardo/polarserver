@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/")
+                .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .and()
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -44,6 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/error","/login-failure","/sign-up","/login-state","/login","/","/validation-code","/check-code");
+                .antMatchers("/error","/login-failure","/sign-up","/login-state","/login","/","/validation-code","/check-code","/login-success");
     }
 }
